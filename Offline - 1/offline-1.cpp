@@ -6,12 +6,43 @@ using namespace std;
 #define WHITE 1
 #define GRAY 2
 #define BLACK 3
+#define INF 1e9
+#define NIL -1
 
 int adj[100][100];
 int color[100];
-int node, edge;
+int node, edge, weight;
 vector<int>vktr;
+int dist[100];
+string pre_node[100];
 
+
+//************ For Initialize ************//
+
+void Initialize_Single_Source(int source)
+{
+    for(int i = 0; i < node; i++)
+    {
+        dist[i] = INF;
+        pre_node[i] = NIL;
+    }
+    dist[source] = 0;
+
+}
+
+
+Relax(int u, int v, int w)
+{
+    if(dist[v] > dist[u] + w)
+    {
+        dist[v] = dist[u] + w;
+        pre_node[v] = u;
+
+    }
+}
+
+
+// **********  For Topological Sort  ************//
 
 void dfsVisit(int x)
 {
@@ -19,7 +50,7 @@ void dfsVisit(int x)
     //cout << x << " ";
     for(int i = 0; i < node; i++)
     {
-        if(adj[x][i] == 1 && color[i] == WHITE)
+        if(adj[x][i] >= -2 && color[i] == WHITE)
         {
             dfsVisit(i);
         }
@@ -54,37 +85,51 @@ int main()
 {
     //freopen("Adjacency Matrix Input.txt","r", stdin); // input from a txt file
     cout << "Enter the number of nodes & edges : ";
-    cin >> node >> edge;
+    cin >> node >> edge ;
 
-    int n1, n2;
+    int n1, n2, n3;
 
     cout << "Enter values : " << endl;
     for(int i = 0; i < edge; i++)
     {
-        cin >> n1 >> n2;
-        adj[n1][n2] = 1;
+        cin >> n1 >> n2 >> n3;
+        //adj[n1][n2] = 1;
         //adj[n2][n1] = 1;
+        adj[n1][n2] = n3;
+
     }
 
     dfs();
 
-    for(int i = vktr.size() - 1; i >= 0; i--){
+    for(int i = vktr.size() - 1; i >= 0; i--)
+    {
         cout << vktr[i] << " ";
     }
+    cout << endl << endl;
 
+    int source;
+    cout << "Enter the source node : ";
+    cin >> source;
+    Initialize_Single_Source(source);
+
+
+    for(int i = 0; i < node; i++)
+    {
+        for(int j = 0; j < node; j++)
+        {
+            if(adj[i][j] >= -2 )
+            {
+                Relax(vktr[i], vktr[j], adj[i][j]);
+            }
+        }
+    }
+
+    for(int i = 0; i < node; i++)
+    {
+        cout << "For Node : " << i << endl << "cost: " << dist[i] << endl << endl;
+
+    }
 }
-
-
-/*
-
-5 5
-0 1
-0 4
-1 2
-1 3
-3 2
-
-*/
 
 
 
